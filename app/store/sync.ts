@@ -21,6 +21,16 @@ export interface WebDavConfig {
   password: string;
 }
 
+export async function globalSync() {
+  if (useSyncStore.getState().cloudSync()) {
+    const syncStore = useSyncStore.getState();
+    const localState = getLocalAppState();
+    await syncStore
+      .getClient()
+      .set(syncStore.getUsername(), JSON.stringify(localState));
+  }
+}
+
 const isApp = !!getClientConfig()?.isApp;
 export type SyncStore = GetStoreState<typeof useSyncStore>;
 
@@ -84,6 +94,11 @@ export const useSyncStore = createPersistStore(
       }
     },
 
+    getUsername() {
+      const provider = get().provider;
+      return get()[provider].username;
+    },
+
     getClient() {
       const provider = get().provider;
       const client = createSyncClient(provider, get());
@@ -98,6 +113,7 @@ export const useSyncStore = createPersistStore(
 
       try {
         const remoteState = await client.get(config.username);
+
         if (!remoteState || remoteState === "") {
           await client.set(config.username, JSON.stringify(localState));
           console.log(
@@ -108,8 +124,8 @@ export const useSyncStore = createPersistStore(
           const parsedRemoteState = JSON.parse(
             await client.get(config.username),
           ) as AppState;
-          mergeAppState(localState, parsedRemoteState);
-          setLocalAppState(localState);
+          // mergeAppState(localState, parsedRemoteState);
+          setLocalAppState(parsedRemoteState);
         }
       } catch (e) {
         console.log("[Sync] failed to get remote state", e);

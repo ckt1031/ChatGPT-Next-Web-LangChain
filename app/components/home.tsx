@@ -2,7 +2,7 @@
 
 require("../polyfill");
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import styles from "./home.module.scss";
 
@@ -30,6 +30,7 @@ import { getClientConfig } from "../config/client";
 import { ClientApi } from "../client/api";
 import { useAccessStore } from "../store";
 import { identifyDefaultClaudeModel } from "../utils/checkers";
+import { useSyncStore } from "../store/sync";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -177,6 +178,10 @@ function Screen() {
 
 export function useLoadData() {
   const config = useAppConfig();
+  const syncStore = useSyncStore();
+  const couldSync = useMemo(() => {
+    return syncStore.cloudSync();
+  }, [syncStore]);
 
   var api: ClientApi;
   if (config.modelConfig.model.startsWith("gemini")) {
@@ -190,6 +195,9 @@ export function useLoadData() {
     (async () => {
       const models = await api.llm.models();
       config.mergeModels(models);
+
+      // Also fetch from sync
+      if (couldSync) await syncStore.sync();
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -30,6 +30,7 @@ import { FileInfo } from "../client/platforms/utils";
 import { identifyDefaultClaudeModel } from "../utils/checkers";
 import { collectModelsWithDefaultModel } from "../utils/model";
 import { useAccessStore } from "./access";
+import { globalSync } from "./sync";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -194,6 +195,7 @@ export const useChatStore = createPersistStore(
           sessions: [createEmptySession()],
           currentSessionIndex: 0,
         }));
+        globalSync();
       },
 
       selectSession(index: number) {
@@ -225,6 +227,8 @@ export const useChatStore = createPersistStore(
             sessions: newSessions,
           };
         });
+
+        globalSync();
       },
 
       newSession(mask?: Mask) {
@@ -248,6 +252,8 @@ export const useChatStore = createPersistStore(
           currentSessionIndex: 0,
           sessions: [session].concat(state.sessions),
         }));
+
+        globalSync();
       },
 
       nextSession(delta: number) {
@@ -288,11 +294,14 @@ export const useChatStore = createPersistStore(
           sessions,
         }));
 
+        globalSync();
+
         showToast(
           Locale.Home.DeleteToast,
           {
             text: Locale.Home.Revert,
-            onClick() {
+            async onClick() {
+              await globalSync();
               set(() => restoreState);
             },
           },
@@ -307,6 +316,7 @@ export const useChatStore = createPersistStore(
         if (index < 0 || index >= sessions.length) {
           index = Math.min(sessions.length - 1, Math.max(0, index));
           set(() => ({ currentSessionIndex: index }));
+          globalSync();
         }
 
         const session = sessions[index];
@@ -653,6 +663,7 @@ export const useChatStore = createPersistStore(
         const messages = session?.messages;
         updater(messages?.at(messageIndex));
         set(() => ({ sessions }));
+        globalSync();
       },
 
       resetSession() {
@@ -790,6 +801,7 @@ export const useChatStore = createPersistStore(
         const index = get().currentSessionIndex;
         updater(sessions[index]);
         set(() => ({ sessions }));
+        globalSync();
       },
 
       clearAllData() {

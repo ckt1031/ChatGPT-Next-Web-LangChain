@@ -119,6 +119,7 @@ import {
   WebTranscriptionApi,
 } from "../utils/speech";
 import { FileInfo } from "../client/platforms/utils";
+import { globalSync } from "../store/sync";
 
 const ttsPlayer = createTTSPlayer();
 
@@ -992,18 +993,20 @@ function _Chat() {
     }
   };
 
-  const deleteMessage = (msgId?: string) => {
+  const deleteMessage = async (msgId?: string) => {
     chatStore.updateCurrentSession(
       (session) =>
         (session.messages = session.messages.filter((m) => m.id !== msgId)),
     );
+
+    await globalSync();
   };
 
-  const onDelete = (msgId: string) => {
-    deleteMessage(msgId);
+  const onDelete = async (msgId: string) => {
+    await deleteMessage(msgId);
   };
 
-  const onResend = (message: ChatMessage) => {
+  const onResend = async (message: ChatMessage) => {
     // when it is resending a message
     // 1. for a user's message, find the next bot response
     // 2. for a bot's message, find the last user's input
@@ -1048,8 +1051,8 @@ function _Chat() {
     }
 
     // delete the original messages
-    deleteMessage(userMessage.id);
-    deleteMessage(botMessage?.id);
+    await deleteMessage(userMessage.id);
+    await deleteMessage(botMessage?.id);
 
     // resend the message
     setIsLoading(true);

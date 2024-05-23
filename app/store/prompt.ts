@@ -3,6 +3,7 @@ import { getLang } from "../locales";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import { globalSync } from "./sync";
 
 export interface Prompt {
   id: string;
@@ -66,6 +67,9 @@ export const usePromptStore = createPersistStore(
         prompts: prompts,
       }));
 
+      console.log("Sync add prompt");
+      globalSync();
+
       return prompt.id!;
     },
 
@@ -97,6 +101,9 @@ export const usePromptStore = createPersistStore(
         prompts,
         counter: get().counter + 1,
       }));
+
+      console.log("Sync remove prompt");
+      globalSync();
     },
 
     getUserPrompts() {
@@ -120,6 +127,9 @@ export const usePromptStore = createPersistStore(
       prompts[id] = prompt;
       set(() => ({ prompts }));
       SearchService.add(prompt);
+
+      console.log("Sync update prompt");
+      globalSync();
     },
 
     search(text: string) {
@@ -166,7 +176,7 @@ export const usePromptStore = createPersistStore(
                   title,
                   content,
                   createdAt: Date.now(),
-                } as Prompt),
+                }) as Prompt,
             );
           });
 

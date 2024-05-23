@@ -5,6 +5,7 @@ import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import { globalSync } from "./sync";
 
 export type Mask = {
   id: string;

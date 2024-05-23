@@ -68,7 +68,7 @@ import { InputRange } from "./input-range";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarPicker } from "./emoji";
 import { getClientConfig } from "../config/client";
-import { useSyncStore } from "../store/sync";
+import { globalSync, useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { PluginConfigList } from "./plugin-config";
 import { useMaskStore } from "../store/mask";
@@ -515,19 +515,34 @@ function SyncItems() {
               }}
             />
             {couldSync && (
-              <IconButton
-                icon={<ResetIcon />}
-                text={Locale.UI.Sync}
-                onClick={async () => {
-                  try {
-                    await syncStore.sync();
-                    showToast(Locale.Settings.Sync.Success);
-                  } catch (e) {
-                    showToast(Locale.Settings.Sync.Fail);
-                    console.error("[Sync]", e);
-                  }
-                }}
-              />
+              <>
+                <IconButton
+                  icon={<ResetIcon />}
+                  text={Locale.UI.Sync}
+                  onClick={async () => {
+                    try {
+                      await syncStore.sync();
+                      showToast(Locale.Settings.Sync.Success);
+                    } catch (e) {
+                      showToast(Locale.Settings.Sync.Fail);
+                      console.error("[Sync]", e);
+                    }
+                  }}
+                />
+                <IconButton
+                  icon={<ResetIcon />}
+                  text={"Override"}
+                  onClick={async () => {
+                    try {
+                      await globalSync();
+                      showToast(Locale.Settings.Sync.Success);
+                    } catch (e) {
+                      showToast(Locale.Settings.Sync.Fail);
+                      console.error("[Sync]", e);
+                    }
+                  }}
+                />
+              </>
             )}
           </div>
         </ListItem>
@@ -1249,6 +1264,7 @@ export function Settings() {
               const modelConfig = { ...config.modelConfig };
               updater(modelConfig);
               config.update((config) => (config.modelConfig = modelConfig));
+              globalSync();
             }}
           />
         </List>
@@ -1264,6 +1280,7 @@ export function Settings() {
               const pluginConfig = { ...config.pluginConfig };
               updater(pluginConfig);
               config.update((config) => (config.pluginConfig = pluginConfig));
+              globalSync();
             }}
           />
         </List>
@@ -1275,6 +1292,7 @@ export function Settings() {
               const ttsConfig = { ...config.ttsConfig };
               updater(ttsConfig);
               config.update((config) => (config.ttsConfig = ttsConfig));
+              globalSync();
             }}
           />
         </List>
@@ -1286,6 +1304,7 @@ export function Settings() {
               const sttConfig = { ...config.sttConfig };
               updater(sttConfig);
               config.update((config) => (config.sttConfig = sttConfig));
+              globalSync();
             }}
           />
         </List>
