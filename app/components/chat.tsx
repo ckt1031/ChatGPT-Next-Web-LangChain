@@ -149,6 +149,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
                 chatStore.updateCurrentSession(
                   (session) => (session.memoryPrompt = ""),
                 );
+                globalSync();
               }
             }}
           />,
@@ -172,6 +173,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             const mask = { ...session.mask };
             updater(mask);
             chatStore.updateCurrentSession((session) => (session.mask = mask));
+            globalSync();
           }}
           shouldSyncFromGlobal
           extraListItems={
@@ -347,11 +349,12 @@ function ClearContextDivider() {
   return (
     <div
       className={styles["clear-context"]}
-      onClick={() =>
+      onClick={() => {
         chatStore.updateCurrentSession(
           (session) => (session.clearContextIndex = undefined),
-        )
-      }
+        );
+        globalSync();
+      }}
     >
       <div className={styles["clear-context-tips"]}>{Locale.Context.Clear}</div>
       <div className={styles["clear-context-revert-btn"]}>
@@ -483,6 +486,7 @@ export function ChatActions(props: {
     chatStore.updateCurrentSession((session) => {
       session.mask.usePlugins = !session.mask.usePlugins;
     });
+    globalSync();
   }
 
   // switch themes
@@ -654,6 +658,7 @@ export function ChatActions(props: {
                 session.mask.modelConfig.model = s[0] as ModelType;
                 session.mask.syncGlobalConfig = false;
               });
+              globalSync();
               showToast(s[0]);
             }}
           />
@@ -672,6 +677,7 @@ export function ChatActions(props: {
                 session.memoryPrompt = ""; // will clear memory
               }
             });
+            globalSync();
           }}
         />
       </div>
@@ -707,6 +713,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
               chatStore.updateCurrentSession(
                 (session) => (session.messages = messages),
               );
+              globalSync();
               props.onClose();
             }}
           />,
@@ -720,11 +727,12 @@ export function EditMessageModal(props: { onClose: () => void }) {
             <input
               type="text"
               value={session.topic}
-              onInput={(e) =>
+              onInput={(e) => {
                 chatStore.updateCurrentSession(
                   (session) => (session.topic = e.currentTarget.value),
-                )
-              }
+                );
+                globalSync();
+              }}
             ></input>
           </ListItem>
         </List>
@@ -828,10 +836,12 @@ function _Chat() {
     newm: () => navigate(Path.NewChat),
     prev: () => chatStore.nextSession(-1),
     next: () => chatStore.nextSession(1),
-    clear: () =>
+    clear: () => {
       chatStore.updateCurrentSession(
         (session) => (session.clearContextIndex = session.messages.length),
-      ),
+      );
+      globalSync();
+    },
     del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
   });
 
@@ -952,6 +962,7 @@ function _Chat() {
         session.mask.modelConfig = { ...config.modelConfig };
       }
     });
+    globalSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (isFirefox()) config.sttConfig.engine = FIREFOX_DEFAULT_STT_ENGINE;
     setSpeechApi(
@@ -1555,6 +1566,7 @@ function _Chat() {
                                 m.content = newContent;
                               }
                             });
+                            globalSync();
                           }}
                         ></IconButton>
                       </div>

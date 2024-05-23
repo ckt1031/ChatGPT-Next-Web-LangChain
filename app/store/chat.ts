@@ -329,6 +329,7 @@ export const useChatStore = createPersistStore(
           session.messages = session.messages.concat();
           session.lastUpdate = Date.now();
         });
+        globalSync();
         get().updateStat(message);
         get().summarizeSession();
       },
@@ -401,6 +402,7 @@ export const useChatStore = createPersistStore(
           session.messages.push(savedUserMessage);
           session.messages.push(botMessage);
         });
+        globalSync();
         const isEnableRAG = attachFiles && attachFiles?.length > 0;
         var api: ClientApi;
         api = new ClientApi(ModelProvider.GPT);
@@ -448,6 +450,7 @@ export const useChatStore = createPersistStore(
                   get().onNewMessage(botMessage);
                 }
                 ChatControllerPool.remove(session.id, botMessage.id);
+                globalSync();
               },
               onError(error) {
                 const isAborted = error.message.includes("aborted");
@@ -463,6 +466,7 @@ export const useChatStore = createPersistStore(
                 get().updateCurrentSession((session) => {
                   session.messages = session.messages.concat();
                 });
+                globalSync();
                 ChatControllerPool.remove(
                   session.id,
                   botMessage.id ?? messageIndex,
@@ -521,6 +525,7 @@ export const useChatStore = createPersistStore(
                 get().onNewMessage(botMessage);
               }
               ChatControllerPool.remove(session.id, botMessage.id);
+              globalSync();
             },
             onError(error) {
               const isAborted = error.message.includes("aborted");
@@ -536,6 +541,7 @@ export const useChatStore = createPersistStore(
               get().updateCurrentSession((session) => {
                 session.messages = session.messages.concat();
               });
+              globalSync();
               ChatControllerPool.remove(
                 session.id,
                 botMessage.id ?? messageIndex,
@@ -671,6 +677,7 @@ export const useChatStore = createPersistStore(
           session.messages = [];
           session.memoryPrompt = "";
         });
+        globalSync();
       },
 
       summarizeSession() {
@@ -716,6 +723,7 @@ export const useChatStore = createPersistStore(
                   (session.topic =
                     message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
               );
+              globalSync();
             },
           });
         }
@@ -781,6 +789,7 @@ export const useChatStore = createPersistStore(
                 session.lastSummarizeIndex = lastSummarizeIndex;
                 session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
               });
+              globalSync();
             },
             onError(err) {
               console.error("[Summarize] ", err);
@@ -801,12 +810,12 @@ export const useChatStore = createPersistStore(
         const index = get().currentSessionIndex;
         updater(sessions[index]);
         set(() => ({ sessions }));
-        globalSync();
       },
 
       clearAllData() {
         localStorage.clear();
         location.reload();
+        globalSync();
       },
     };
 
