@@ -2,7 +2,7 @@ import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
 import { DallEAPIWrapper } from "@/app/api/langchain-tools/dalle_image_generator";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { Calculator } from "@langchain/community/tools/calculator";
-import { WebBrowser } from "langchain/tools/webbrowser";
+// import { WebBrowser } from "langchain/tools/webbrowser";
 import { WolframAlphaTool } from "@/app/api/langchain-tools/wolframalpha";
 import { BilibiliVideoInfoTool } from "./bilibili_vid_info";
 import { BilibiliVideoSearchTool } from "./bilibili_vid_search";
@@ -38,10 +38,10 @@ export class EdgeTool {
   }
 
   async getCustomTools(): Promise<any[]> {
-    const webBrowserTool = new WebBrowser({
-      model: this.model,
-      embeddings: this.embeddings,
-    });
+    // const webBrowserTool = new WebBrowser({
+    //   model: this.model,
+    //   embeddings: this.embeddings,
+    // });
     const calculatorTool = new Calculator();
     const dallEAPITool = new DallEAPIWrapper(
       this.apiKey,
