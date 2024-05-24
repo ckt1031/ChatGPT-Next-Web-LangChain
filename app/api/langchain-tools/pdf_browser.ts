@@ -8,9 +8,9 @@ import {
 } from "langchain/text_splitter";
 
 import { CallbackManagerForToolRun } from "@langchain/core/callbacks/manager";
-import { BaseLanguageModel } from "langchain/dist/base_language";
+import type { BaseLanguageModelInterface } from "@langchain/core/language_models/base";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
+import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
@@ -73,13 +73,16 @@ export class PDFBrowser extends Tool {
     return [...super.lc_namespace, "pdfbrowser"];
   }
 
-  private model: BaseLanguageModel;
+  private model: BaseLanguageModelInterface;
 
-  private embeddings: Embeddings;
+  private embeddings: EmbeddingsInterface;
 
   private textSplitter: TextSplitter;
 
-  constructor(model: BaseLanguageModel, embeddings: Embeddings) {
+  constructor(
+    model: BaseLanguageModelInterface,
+    embeddings: EmbeddingsInterface,
+  ) {
     super();
     this.model = model;
     this.embeddings = embeddings;

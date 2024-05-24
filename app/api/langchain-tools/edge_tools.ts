@@ -1,33 +1,33 @@
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
 import { DallEAPIWrapper } from "@/app/api/langchain-tools/dalle_image_generator";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
-import { BaseLanguageModel } from "langchain/dist/base_language";
-import { Calculator } from "langchain/tools/calculator";
+import { Calculator } from "@langchain/community/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
 import { WolframAlphaTool } from "@/app/api/langchain-tools/wolframalpha";
 import { BilibiliVideoInfoTool } from "./bilibili_vid_info";
 import { BilibiliVideoSearchTool } from "./bilibili_vid_search";
 import { BilibiliVideoConclusionTool } from "./bilibili_vid_conclusion";
 import { BilibiliMusicRecognitionTool } from "./bilibili_music_recognition";
 import { ServerlessWebScraping } from "./web-scrape";
+import type { BaseLanguageModelInterface } from "@langchain/core/language_models/base";
+import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 
 export class EdgeTool {
   private apiKey: string | undefined;
 
   private baseUrl: string;
 
-  private model: BaseLanguageModel;
+  private model: BaseLanguageModelInterface;
 
-  private embeddings: Embeddings;
+  private embeddings: EmbeddingsInterface;
 
   private callback?: (data: string) => Promise<void>;
 
   constructor(
     apiKey: string | undefined,
     baseUrl: string,
-    model: BaseLanguageModel,
-    embeddings: Embeddings,
+    model: BaseLanguageModelInterface,
+    embeddings: EmbeddingsInterface,
     callback?: (data: string) => Promise<void>,
   ) {
     this.apiKey = apiKey;

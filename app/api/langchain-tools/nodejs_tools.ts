@@ -1,10 +1,8 @@
-import { BaseLanguageModel } from "langchain/dist/base_language";
 import { PDFBrowser } from "@/app/api/langchain-tools/pdf_browser";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
 import { DallEAPINodeWrapper } from "@/app/api/langchain-tools/dalle_image_generator_node";
 import { StableDiffusionNodeWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator_node";
-import { Calculator } from "langchain/tools/calculator";
+import { Calculator } from "@langchain/community/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
 import { WolframAlphaTool } from "@/app/api/langchain-tools/wolframalpha";
 import { BilibiliVideoInfoTool } from "./bilibili_vid_info";
@@ -12,23 +10,25 @@ import { BilibiliVideoSearchTool } from "./bilibili_vid_search";
 import { BilibiliMusicRecognitionTool } from "./bilibili_music_recognition";
 import { RAGSearch } from "./rag_search";
 import { BilibiliVideoConclusionTool } from "./bilibili_vid_conclusion";
+import type { BaseLanguageModelInterface } from "@langchain/core/language_models/base";
+import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 
 export class NodeJSTool {
   private apiKey: string | undefined;
   private baseUrl: string;
-  private model: BaseLanguageModel;
-  private embeddings: Embeddings;
+  private model: BaseLanguageModelInterface;
+  private embeddings: EmbeddingsInterface;
   private sessionId: string;
-  private ragEmbeddings: Embeddings;
+  private ragEmbeddings: EmbeddingsInterface;
   private callback?: (data: string) => Promise<void>;
 
   constructor(
     apiKey: string | undefined,
     baseUrl: string,
-    model: BaseLanguageModel,
-    embeddings: Embeddings,
+    model: BaseLanguageModelInterface,
+    embeddings: EmbeddingsInterface,
     sessionId: string,
-    ragEmbeddings: Embeddings,
+    ragEmbeddings: EmbeddingsInterface,
     callback?: (data: string) => Promise<void>,
   ) {
     this.apiKey = apiKey;

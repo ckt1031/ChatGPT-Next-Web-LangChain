@@ -1,8 +1,8 @@
 import { Tool } from "@langchain/core/tools";
 import { CallbackManagerForToolRun } from "@langchain/core/callbacks/manager";
-import { BaseLanguageModel } from "langchain/dist/base_language";
+import type { BaseLanguageModelInterface } from "@langchain/core/language_models/base";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
+import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { Pinecone } from "@pinecone-database/pinecone";
@@ -20,13 +20,13 @@ export class RAGSearch extends Tool {
   }
 
   private sessionId: string;
-  private model: BaseLanguageModel;
-  private embeddings: Embeddings;
+  private model: BaseLanguageModelInterface;
+  private embeddings: EmbeddingsInterface;
 
   constructor(
     sessionId: string,
-    model: BaseLanguageModel,
-    embeddings: Embeddings,
+    model: BaseLanguageModelInterface,
+    embeddings: EmbeddingsInterface,
   ) {
     super();
     this.sessionId = sessionId;
