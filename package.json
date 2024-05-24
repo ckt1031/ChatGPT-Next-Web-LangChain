@@ -21,9 +21,10 @@
     "@aws-sdk/s3-request-presigner": "^3.414.0",
     "@fortaine/fetch-event-source": "^3.0.6",
     "@hello-pangea/dnd": "^16.5.0",
-    "@langchain/cohere": "^0.0.7",
-    "@langchain/community": "0.0.57",
-    "@langchain/pinecone": "^0.0.4",
+    "@langchain/cohere": "^0.0.10",
+    "@langchain/community": "0.2.2",
+    "@langchain/openai": "^0.0.33",
+    "@langchain/pinecone": "^0.0.6",
     "@next/third-parties": "^14.1.0",
     "@pinecone-database/pinecone": "^2.2.0",
     "@qdrant/js-client-rest": "^1.8.2",
@@ -38,12 +39,12 @@
     "encoding": "^0.1.13",
     "epub2": "^3.0.2",
     "fuse.js": "^7.0.0",
-    "html-entities": "^2.4.0",
     "heic2any": "^0.0.4",
+    "html-entities": "^2.4.0",
     "html-to-image": "^1.11.11",
     "html-to-text": "^9.0.5",
     "https-proxy-agent": "^7.0.2",
-    "langchain": "0.1.37",
+    "langchain": "0.2.2",
     "mammoth": "^1.7.1",
     "md5": "^2.3.0",
     "mermaid": "^10.6.1",
@@ -90,8 +91,7 @@
     "webpack": "^5.88.1"
   },
   "resolutions": {
-    "lint-staged/yaml": "^2.2.2",
-    "@langchain/core": "0.1.63"
+    "lint-staged/yaml": "^2.2.2"
   },
   "packageManager": "yarn@1.22.19"
 }
