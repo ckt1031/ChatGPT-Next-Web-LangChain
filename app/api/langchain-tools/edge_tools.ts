@@ -10,6 +10,7 @@ import { BilibiliVideoInfoTool } from "./bilibili_vid_info";
 import { BilibiliVideoSearchTool } from "./bilibili_vid_search";
 import { BilibiliVideoConclusionTool } from "./bilibili_vid_conclusion";
 import { BilibiliMusicRecognitionTool } from "./bilibili_music_recognition";
+import { ServerlessWebScraping } from "./web-scrape";
 
 export class EdgeTool {
   private apiKey: string | undefined;
@@ -56,7 +57,8 @@ export class EdgeTool {
     const bilibiliMusicRecognitionTool = new BilibiliMusicRecognitionTool();
     let tools = [
       calculatorTool,
-      webBrowserTool,
+      // webBrowserTool,
+      new ServerlessWebScraping(),
       dallEAPITool,
       stableDiffusionTool,
       arxivAPITool,

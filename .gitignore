@@ -49,3 +49,5 @@ dev
 .vercel
 
 certificates
+
+.wrangler
