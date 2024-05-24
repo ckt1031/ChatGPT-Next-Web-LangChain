@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
 import { Updater } from "../typing";
 import { deepClone } from "./clone";
-import { globalSync } from "../store/sync";
 
 type SecondParam<T> = T extends (
   _f: infer _F,

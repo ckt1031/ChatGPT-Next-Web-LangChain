@@ -67,8 +67,7 @@ export const usePromptStore = createPersistStore(
         prompts: prompts,
       }));
 
-      console.log("Sync add prompt");
-      globalSync();
+      globalSync("Add prompt");
 
       return prompt.id!;
     },
@@ -102,8 +101,7 @@ export const usePromptStore = createPersistStore(
         counter: get().counter + 1,
       }));
 
-      console.log("Sync remove prompt");
-      globalSync();
+      globalSync("Remove prompt");
     },
 
     getUserPrompts() {
@@ -128,8 +126,7 @@ export const usePromptStore = createPersistStore(
       set(() => ({ prompts }));
       SearchService.add(prompt);
 
-      console.log("Sync update prompt");
-      globalSync();
+      globalSync("Update prompt");
     },
 
     search(text: string) {

@@ -21,8 +21,9 @@ export interface WebDavConfig {
   password: string;
 }
 
-export async function globalSync() {
+export async function globalSync(reason?: string) {
   if (useSyncStore.getState().cloudSync()) {
+    console.log(`[Sync] ${reason || "Global sync"}`);
     const syncStore = useSyncStore.getState();
     const localState = getLocalAppState();
     await syncStore
@@ -110,6 +111,8 @@ export const useSyncStore = createPersistStore(
       const provider = get().provider;
       const config = get()[provider];
       const client = this.getClient();
+
+      console.log("[Sync] sync from", provider, config);
 
       try {
         const remoteState = await client.get(config.username);

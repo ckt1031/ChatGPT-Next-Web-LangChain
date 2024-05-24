@@ -1264,7 +1264,7 @@ export function Settings() {
               const modelConfig = { ...config.modelConfig };
               updater(modelConfig);
               config.update((config) => (config.modelConfig = modelConfig));
-              globalSync();
+              globalSync("update model config");
             }}
           />
         </List>
@@ -1280,7 +1280,7 @@ export function Settings() {
               const pluginConfig = { ...config.pluginConfig };
               updater(pluginConfig);
               config.update((config) => (config.pluginConfig = pluginConfig));
-              globalSync();
+              globalSync("update plugin config");
             }}
           />
         </List>
@@ -1292,7 +1292,7 @@ export function Settings() {
               const ttsConfig = { ...config.ttsConfig };
               updater(ttsConfig);
               config.update((config) => (config.ttsConfig = ttsConfig));
-              globalSync();
+              globalSync("update tts config");
             }}
           />
         </List>
@@ -1304,7 +1304,7 @@ export function Settings() {
               const sttConfig = { ...config.sttConfig };
               updater(sttConfig);
               config.update((config) => (config.sttConfig = sttConfig));
-              globalSync();
+              globalSync("update stt config");
             }}
           />
         </List>

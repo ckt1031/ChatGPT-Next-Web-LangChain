@@ -149,7 +149,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
                 chatStore.updateCurrentSession(
                   (session) => (session.memoryPrompt = ""),
                 );
-                globalSync();
+                globalSync("reset memory");
               }
             }}
           />,
@@ -173,7 +173,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             const mask = { ...session.mask };
             updater(mask);
             chatStore.updateCurrentSession((session) => (session.mask = mask));
-            globalSync();
+            globalSync("update mask");
           }}
           shouldSyncFromGlobal
           extraListItems={
@@ -353,7 +353,7 @@ function ClearContextDivider() {
         chatStore.updateCurrentSession(
           (session) => (session.clearContextIndex = undefined),
         );
-        globalSync();
+        globalSync("clear context");
       }}
     >
       <div className={styles["clear-context-tips"]}>{Locale.Context.Clear}</div>
@@ -486,7 +486,7 @@ export function ChatActions(props: {
     chatStore.updateCurrentSession((session) => {
       session.mask.usePlugins = !session.mask.usePlugins;
     });
-    globalSync();
+    globalSync("switch plugins");
   }
 
   // switch themes
@@ -658,7 +658,7 @@ export function ChatActions(props: {
                 session.mask.modelConfig.model = s[0] as ModelType;
                 session.mask.syncGlobalConfig = false;
               });
-              globalSync();
+              globalSync("switch model");
               showToast(s[0]);
             }}
           />
@@ -677,7 +677,7 @@ export function ChatActions(props: {
                 session.memoryPrompt = ""; // will clear memory
               }
             });
-            globalSync();
+            globalSync("clear context");
           }}
         />
       </div>
@@ -713,7 +713,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
               chatStore.updateCurrentSession(
                 (session) => (session.messages = messages),
               );
-              globalSync();
+              globalSync("edit messages");
               props.onClose();
             }}
           />,
@@ -731,7 +731,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
                 chatStore.updateCurrentSession(
                   (session) => (session.topic = e.currentTarget.value),
                 );
-                globalSync();
+                globalSync("edit topic");
               }}
             ></input>
           </ListItem>
@@ -840,7 +840,7 @@ function _Chat() {
       chatStore.updateCurrentSession(
         (session) => (session.clearContextIndex = session.messages.length),
       );
-      globalSync();
+      globalSync("clear context");
     },
     del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
   });
@@ -962,7 +962,7 @@ function _Chat() {
         session.mask.modelConfig = { ...config.modelConfig };
       }
     });
-    globalSync();
+    // globalSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (isFirefox()) config.sttConfig.engine = FIREFOX_DEFAULT_STT_ENGINE;
     setSpeechApi(
@@ -1004,17 +1004,17 @@ function _Chat() {
     }
   };
 
-  const deleteMessage = async (msgId?: string) => {
+  const deleteMessage = (msgId?: string) => {
     chatStore.updateCurrentSession(
       (session) =>
         (session.messages = session.messages.filter((m) => m.id !== msgId)),
     );
 
-    await globalSync();
+    globalSync("delete message");
   };
 
-  const onDelete = async (msgId: string) => {
-    await deleteMessage(msgId);
+  const onDelete = (msgId: string) => {
+    deleteMessage(msgId);
   };
 
   const onResend = async (message: ChatMessage) => {
@@ -1062,8 +1062,8 @@ function _Chat() {
     }
 
     // delete the original messages
-    await deleteMessage(userMessage.id);
-    await deleteMessage(botMessage?.id);
+    deleteMessage(userMessage.id);
+    deleteMessage(botMessage?.id);
 
     // resend the message
     setIsLoading(true);
@@ -1566,7 +1566,7 @@ function _Chat() {
                                 m.content = newContent;
                               }
                             });
-                            globalSync();
+                            globalSync("edit message");
                           }}
                         ></IconButton>
                       </div>

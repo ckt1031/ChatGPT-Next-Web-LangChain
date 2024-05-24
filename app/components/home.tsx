@@ -182,6 +182,7 @@ export function useLoadData() {
   const couldSync = useMemo(() => {
     return syncStore.cloudSync();
   }, [syncStore]);
+  const [runSync, setRunSync] = useState(false);
 
   var api: ClientApi;
   if (config.modelConfig.model.startsWith("gemini")) {
@@ -195,10 +196,15 @@ export function useLoadData() {
     (async () => {
       const models = await api.llm.models();
       config.mergeModels(models);
-
-      // Also fetch from sync
-      if (couldSync) await syncStore.sync();
     })();
+
+    // Also fetch from sync
+    if (couldSync && !runSync) {
+      console.log("[Sync] sync data from cloud");
+      syncStore.sync();
+      // This will ensure syncStore.sync() runs only once
+      setRunSync(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

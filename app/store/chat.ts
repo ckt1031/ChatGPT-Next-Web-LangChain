@@ -195,7 +195,7 @@ export const useChatStore = createPersistStore(
           sessions: [createEmptySession()],
           currentSessionIndex: 0,
         }));
-        globalSync();
+        globalSync("clear sessions");
       },
 
       selectSession(index: number) {
@@ -228,7 +228,7 @@ export const useChatStore = createPersistStore(
           };
         });
 
-        globalSync();
+        globalSync("move session");
       },
 
       newSession(mask?: Mask) {
@@ -253,7 +253,7 @@ export const useChatStore = createPersistStore(
           sessions: [session].concat(state.sessions),
         }));
 
-        globalSync();
+        globalSync("new session");
       },
 
       nextSession(delta: number) {
@@ -263,7 +263,7 @@ export const useChatStore = createPersistStore(
         get().selectSession(limit(i + delta));
       },
 
-      deleteSession(index: number) {
+      async deleteSession(index: number) {
         const deletingLastSession = get().sessions.length === 1;
         const deletedSession = get().sessions.at(index);
 
@@ -294,15 +294,15 @@ export const useChatStore = createPersistStore(
           sessions,
         }));
 
-        globalSync();
+        await globalSync("delete session");
 
         showToast(
           Locale.Home.DeleteToast,
           {
             text: Locale.Home.Revert,
             async onClick() {
-              await globalSync();
               set(() => restoreState);
+              await globalSync("revert delete session");
             },
           },
           5000,
@@ -316,7 +316,7 @@ export const useChatStore = createPersistStore(
         if (index < 0 || index >= sessions.length) {
           index = Math.min(sessions.length - 1, Math.max(0, index));
           set(() => ({ currentSessionIndex: index }));
-          globalSync();
+          globalSync("current session index out of range");
         }
 
         const session = sessions[index];
@@ -329,9 +329,9 @@ export const useChatStore = createPersistStore(
           session.messages = session.messages.concat();
           session.lastUpdate = Date.now();
         });
-        globalSync();
         get().updateStat(message);
         get().summarizeSession();
+        globalSync("new message");
       },
 
       async onUserInput(
@@ -402,7 +402,7 @@ export const useChatStore = createPersistStore(
           session.messages.push(savedUserMessage);
           session.messages.push(botMessage);
         });
-        globalSync();
+        // globalSync();
         const isEnableRAG = attachFiles && attachFiles?.length > 0;
         var api: ClientApi;
         api = new ClientApi(ModelProvider.GPT);
@@ -450,7 +450,7 @@ export const useChatStore = createPersistStore(
                   get().onNewMessage(botMessage);
                 }
                 ChatControllerPool.remove(session.id, botMessage.id);
-                globalSync();
+                globalSync("finish tool agent");
               },
               onError(error) {
                 const isAborted = error.message.includes("aborted");
@@ -466,7 +466,7 @@ export const useChatStore = createPersistStore(
                 get().updateCurrentSession((session) => {
                   session.messages = session.messages.concat();
                 });
-                globalSync();
+                globalSync("finish tool agent #1");
                 ChatControllerPool.remove(
                   session.id,
                   botMessage.id ?? messageIndex,
@@ -525,7 +525,7 @@ export const useChatStore = createPersistStore(
                 get().onNewMessage(botMessage);
               }
               ChatControllerPool.remove(session.id, botMessage.id);
-              globalSync();
+              globalSync("finish chat");
             },
             onError(error) {
               const isAborted = error.message.includes("aborted");
@@ -541,7 +541,7 @@ export const useChatStore = createPersistStore(
               get().updateCurrentSession((session) => {
                 session.messages = session.messages.concat();
               });
-              globalSync();
+              globalSync("finish chat #1");
               ChatControllerPool.remove(
                 session.id,
                 botMessage.id ?? messageIndex,
@@ -669,7 +669,7 @@ export const useChatStore = createPersistStore(
         const messages = session?.messages;
         updater(messages?.at(messageIndex));
         set(() => ({ sessions }));
-        globalSync();
+        globalSync("update message");
       },
 
       resetSession() {
@@ -677,7 +677,7 @@ export const useChatStore = createPersistStore(
           session.messages = [];
           session.memoryPrompt = "";
         });
-        globalSync();
+        globalSync("reset session");
       },
 
       summarizeSession() {
@@ -723,7 +723,7 @@ export const useChatStore = createPersistStore(
                   (session.topic =
                     message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
               );
-              globalSync();
+              globalSync("finish summarize topic");
             },
           });
         }
@@ -789,7 +789,7 @@ export const useChatStore = createPersistStore(
                 session.lastSummarizeIndex = lastSummarizeIndex;
                 session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
               });
-              globalSync();
+              globalSync("finish summarize");
             },
             onError(err) {
               console.error("[Summarize] ", err);
@@ -815,7 +815,6 @@ export const useChatStore = createPersistStore(
       clearAllData() {
         localStorage.clear();
         location.reload();
-        globalSync();
       },
     };
 
