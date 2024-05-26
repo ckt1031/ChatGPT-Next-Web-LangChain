@@ -6266,6 +6266,28 @@ langchainhub@~0.0.8:
   resolved "https://registry.npmjs.org/langchainhub/-/langchainhub-0.0.8.tgz"
   integrity sha512-Woyb8YDHgqqTOZvWIbm2CaFDGfZ4NTSyXV687AG4vXEfoNo7cGQp7nhl7wL3ehenKWmNEmcxCLgOZzW8jE6lOQ==
 
+langfuse-core@^3.11.1:
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/langfuse-core/-/langfuse-core-3.11.1.tgz#5f3793c345720c4e42ec0a3ef45e8fb9f3834c52"
+  integrity sha512-wRXgzSVpZtjsPCBe/qavE14rDwsjGH/fWZzcRLbjyIGizLG7ilQJ3nMNlVlc5OE/9HU47aCpwQlyC5vRIQT5YA==
+  dependencies:
+    mustache "^4.2.0"
+
+langfuse-langchain@^3.11.1:
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/langfuse-langchain/-/langfuse-langchain-3.11.1.tgz#980116fae3fd4593519f32a2073ed5ace3484413"
+  integrity sha512-uEewNeplYC+o34pjU3y4JSwPjkTJI7fXuJWN3xPMd/K5WZgBTTtxK9RgyV0qPm7pW/xLORcZrZOQ3oKhyRftuA==
+  dependencies:
+    langfuse "^3.11.1"
+    langfuse-core "^3.11.1"
+
+langfuse@^3.11.1:
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.11.1.tgz#2a3ac1406bafc146f1c462b707cb37cf07ed773e"
+  integrity sha512-TPMlUMRG/SfvUh+Ovfi0N1i/rOSXKtKU+D1POCMuSXtjsY99yTiALJOm1+wy0DejJyJ/FsY+nijZwQk7/unANg==
+  dependencies:
+    langfuse-core "^3.11.1"
+
 langsmith@~0.1.1, langsmith@~0.1.7:
   version "0.1.14"
   resolved "https://registry.npmjs.org/langsmith/-/langsmith-0.1.14.tgz"

@@ -38,6 +38,7 @@ import {
   AIMessage,
 } from "@langchain/core/messages";
 import { MultimodalContent } from "@/app/client/api";
+import { getLangFuse } from "./langfuse";
 
 export interface RequestMessage {
   role: string;
@@ -412,6 +413,7 @@ export class AgentApi {
         typeof lastMessageContent === "string"
           ? new HumanMessage(lastMessageContent)
           : new HumanMessage({ content: lastMessageContent });
+      const langfuse = process.env.LANGFUSE_PUBLIC_KEY ? [getLangFuse()] : [];
       executor
         .invoke(
           {
@@ -419,7 +421,7 @@ export class AgentApi {
             signal: this.controller.signal,
           },
           {
-            callbacks: [handler],
+            callbacks: [handler, ...langfuse],
           },
         )
         .catch((error) => {
