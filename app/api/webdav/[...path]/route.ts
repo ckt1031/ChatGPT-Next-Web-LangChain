@@ -21,6 +21,7 @@ async function handle(
 
   const requestUrl = new URL(req.url);
   let endpoint = requestUrl.searchParams.get("endpoint");
+  const isMKCOL = requestUrl.searchParams.get("mkcol") === "true";
 
   // Validate the endpoint to prevent potential SSRF attacks
   if (
@@ -73,7 +74,7 @@ async function handle(
   }
 
   // for GET request, only allow request ending with fileName
-  if (req.method === "GET" && !targetPath.endsWith(fileName)) {
+  if (req.method === "GET" && !targetPath.endsWith(fileName) && !isMKCOL) {
     return NextResponse.json(
       {
         error: true,
@@ -109,9 +110,9 @@ async function handle(
     headers: {
       authorization: req.headers.get("authorization") ?? "",
     },
-    body: shouldNotHaveBody ? null : req.body,
+    body: shouldNotHaveBody && !isMKCOL ? null : req.body,
     redirect: "manual",
-    method,
+    method: isMKCOL ? "MKCOL" : method,
     // @ts-ignore
     duplex: "half",
   };
