@@ -5,7 +5,6 @@ import styles from "./settings.module.scss";
 import ResetIcon from "../icons/reload.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
-import CloudUploadIcon from "../icons/cloud-upload.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -535,7 +534,7 @@ function SyncItems() {
                   }}
                 />
                 <IconButton
-                  icon={<CloudUploadIcon />}
+                  icon={<ResetIcon />}
                   text={"Push"}
                   onClick={async () => {
                     try {
