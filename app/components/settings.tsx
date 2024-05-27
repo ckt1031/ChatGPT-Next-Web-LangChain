@@ -518,9 +518,13 @@ function SyncItems() {
               <>
                 <IconButton
                   icon={<ResetIcon />}
-                  text={Locale.UI.Sync}
+                  text={"Pull"}
                   onClick={async () => {
                     try {
+                      const confirm = await showConfirm(
+                        "Sync with server, override local data?",
+                      );
+                      if (!confirm) return;
                       await syncStore.sync();
                       showToast(Locale.Settings.Sync.Success);
                     } catch (e) {
@@ -531,9 +535,13 @@ function SyncItems() {
                 />
                 <IconButton
                   icon={<ResetIcon />}
-                  text={"Override"}
+                  text={"Push"}
                   onClick={async () => {
                     try {
+                      const confirm = await showConfirm(
+                        "Override server's sync data?",
+                      );
+                      if (!confirm) return;
                       await globalSync();
                       showToast(Locale.Settings.Sync.Success);
                     } catch (e) {
