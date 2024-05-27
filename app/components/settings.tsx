@@ -5,6 +5,7 @@ import styles from "./settings.module.scss";
 import ResetIcon from "../icons/reload.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
+import CloudUploadIcon from "../icons/cloud-upload.svg";
 import CopyIcon from "../icons/copy.svg";
 import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -518,9 +519,13 @@ function SyncItems() {
               <>
                 <IconButton
                   icon={<ResetIcon />}
-                  text={Locale.UI.Sync}
+                  text={"Pull"}
                   onClick={async () => {
                     try {
+                      const confirm = await showConfirm(
+                        "Sync with server, override local data?",
+                      );
+                      if (!confirm) return;
                       await syncStore.sync();
                       showToast(Locale.Settings.Sync.Success);
                     } catch (e) {
@@ -530,10 +535,14 @@ function SyncItems() {
                   }}
                 />
                 <IconButton
-                  icon={<ResetIcon />}
-                  text={"Override"}
+                  icon={<CloudUploadIcon />}
+                  text={"Push"}
                   onClick={async () => {
                     try {
+                      const confirm = await showConfirm(
+                        "Override server's sync data?",
+                      );
+                      if (!confirm) return;
                       await globalSync();
                       showToast(Locale.Settings.Sync.Success);
                     } catch (e) {
