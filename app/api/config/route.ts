@@ -15,6 +15,7 @@ const DANGER_CONFIG = {
   customModels: serverConfig.customModels,
   isEnableRAG: serverConfig.isEnableRAG,
   defaultModel: serverConfig.defaultModel,
+  edgeTTSVoiceName: serverConfig.edgeTTSVoiceName,
 };
 
 declare global {
@@ -28,4 +29,4 @@ async function handle() {
 export const GET = handle;
 export const POST = handle;
 
-export const runtime = "edge";
+export const runtime = "nodejs";

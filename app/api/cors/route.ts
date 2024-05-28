@@ -34,5 +34,5 @@ async function handle(req: NextRequest) {
 export const GET = handle;
 export const OPTIONS = handle;
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const revalidate = 0;

@@ -26,10 +26,12 @@ export function ModelConfigList(props: {
           }}
         >
           {allModels
+            // Order by name
+            .sort((a, b) => a.displayName.localeCompare(b.displayName))
             .filter((v) => v.available)
             .map((v, i) => (
               <option value={v.name} key={i}>
-                {v.displayName}({v.provider?.providerName})
+                {v.displayName}
               </option>
             ))}
         </Select>

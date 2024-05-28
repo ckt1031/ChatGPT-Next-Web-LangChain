@@ -59,13 +59,6 @@ function getApiKey(keys?: string) {
   const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
   const randomIndex = Math.floor(Math.random() * apiKeys.length);
   const apiKey = apiKeys[randomIndex];
-  if (apiKey) {
-    console.log(
-      `[Server Config] using ${randomIndex + 1} of ${
-        apiKeys.length
-      } api key - ${apiKey}`,
-    );
-  }
 
   return apiKey;
 }
@@ -151,5 +144,7 @@ export const getServerSideConfig = () => {
     ragChunkOverlap: process.env.RAG_CHUNK_OVERLAP ?? "200",
     ragReturnCount: process.env.RAG_RETURN_COUNT ?? "4",
     allowedWebDevEndpoints,
+
+    edgeTTSVoiceName: process.env.EDGE_TTS_VOICE_NAME ?? "zh-CN-YunxiNeural",
   };
 };
