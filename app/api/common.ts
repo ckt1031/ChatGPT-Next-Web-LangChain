@@ -139,7 +139,7 @@ export async function requestOpenai(req: NextRequest) {
       // If openaiOrganizationHeader is present, log it; otherwise, log that the header is not present
       console.log("[Org ID]", openaiOrganizationHeader);
     } else {
-      console.log("[Org ID] is not set up.");
+      // console.log("[Org ID] is not set up.");
     }
 
     // to prevent browser prompt for credentials
