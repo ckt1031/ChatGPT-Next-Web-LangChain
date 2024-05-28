@@ -25,10 +25,7 @@ export async function requestOpenai(req: NextRequest) {
     authHeaderName = "Authorization";
   }
 
-  let path = `${req.nextUrl.pathname}${req.nextUrl.search}`.replaceAll(
-    "/api/openai/",
-    "",
-  );
+  let path = req.nextUrl.pathname.replaceAll("/api/openai/", "");
 
   let baseUrl =
     serverConfig.azureUrl || serverConfig.baseUrl || OPENAI_BASE_URL;
@@ -63,7 +60,7 @@ export async function requestOpenai(req: NextRequest) {
 
   let jsonBody;
   let clonedBody;
-  const contentType = req.headers.get("Content-Type");
+  let contentType = req.headers.get("Content-Type");
   if (
     req.method !== "GET" &&
     req.method !== "HEAD" &&
@@ -71,6 +68,13 @@ export async function requestOpenai(req: NextRequest) {
   ) {
     clonedBody = await req.text();
     jsonBody = JSON.parse(clonedBody) as { model?: string };
+  } else if (
+    req.method !== "GET" &&
+    req.method !== "HEAD" &&
+    contentType?.includes("text")
+  ) {
+    contentType = "application/json";
+    clonedBody = await req.text();
   } else {
     clonedBody = req.body;
   }
