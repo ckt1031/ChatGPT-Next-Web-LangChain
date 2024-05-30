@@ -106,6 +106,28 @@ async function handle(
     method?.toLowerCase() ?? "",
   );
 
+  // Check if WebDAV folder exists, PROPFIND
+  if (isMKCOL) {
+    const checkPROPFIND = await fetch(targetPath, {
+      method: "PROPFIND",
+      headers: {
+        authorization: req.headers.get("authorization") ?? "",
+      },
+    });
+
+    if (checkPROPFIND.status < 400) {
+      return NextResponse.json(
+        {
+          error: false,
+          msg: "Folder exists",
+        },
+        {
+          status: 200,
+        },
+      );
+    }
+  }
+
   const fetchOptions: RequestInit = {
     headers: {
       authorization: req.headers.get("authorization") ?? "",
@@ -123,7 +145,7 @@ async function handle(
     fetchResult = await fetch(targetUrl, fetchOptions);
   } finally {
     console.log(
-      "[Any Proxy]",
+      "[WebDAV]",
       targetUrl,
       {
         method: req.method,
