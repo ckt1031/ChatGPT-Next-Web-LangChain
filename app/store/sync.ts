@@ -127,7 +127,7 @@ export const useSyncStore = createPersistStore(
           const parsedRemoteState = JSON.parse(
             await client.get(config.username),
           ) as AppState;
-          // mergeAppState(localState, parsedRemoteState);
+          mergeAppState(localState, parsedRemoteState);
           setLocalAppState(parsedRemoteState);
         }
       } catch (e) {
