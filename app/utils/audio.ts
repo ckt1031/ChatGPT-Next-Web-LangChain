@@ -4,6 +4,12 @@ type TTSPlayer = {
   stop: () => void;
 };
 
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext
+  }
+}
+
 export function createTTSPlayer(): TTSPlayer {
   let audioContext: AudioContext | null = null;
   let audioBufferSourceNode: AudioBufferSourceNode | null = null;
