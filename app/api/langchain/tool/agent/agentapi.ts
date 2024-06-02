@@ -4,16 +4,15 @@ import { getServerSideConfig } from "@/app/config/server";
 import { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 
 import { BufferMemory, ChatMessageHistory } from "langchain/memory";
-import { AgentExecutor, AgentStep } from "langchain/agents";
-import { ACCESS_CODE_PREFIX, ServiceProvider } from "@/app/constant";
+import { AgentExecutor } from "langchain/agents";
+import { ACCESS_CODE_PREFIX } from "@/app/constant";
 
 // import * as langchainTools from "langchain/tools";
 import * as langchainTools from "@/app/api/langchain-tools/langchian-tool-index";
 import { DuckDuckGo } from "@/app/api/langchain-tools/duckduckgo_search";
 import {
   DynamicTool,
-  Tool,
-  StructuredToolInterface,
+  Tool
 } from "@langchain/core/tools";
 import { convertToOpenAITool } from "@langchain/core/utils/function_calling";
 import { BaiduSearch } from "@/app/api/langchain-tools/baidu_search";
@@ -30,15 +29,13 @@ import {
 } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import {
-  BaseMessage,
-  FunctionMessage,
-  ToolMessage,
   SystemMessage,
   HumanMessage,
   AIMessage,
 } from "@langchain/core/messages";
 import { MultimodalContent } from "@/app/client/api";
 import { getLangFuse } from "./langfuse";
+import { GoogleCustomSearch } from "@/app/api/langchain-tools/langchian-tool-index";
 
 export interface RequestMessage {
   role: string;
@@ -285,8 +282,11 @@ export class AgentApi {
           func: async (input: string) => serpAPITool.call(input),
         });
       }
-      if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_API_KEY) {
-        let googleCustomSearchTool = new langchainTools["GoogleCustomSearch"]();
+      if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_SEARCH_API_KEY) {
+        let googleCustomSearchTool = new GoogleCustomSearch({
+          apiKey: process.env.GOOGLE_SEARCH_API_KEY,
+          googleCSEId: process.env.GOOGLE_CSE_ID,
+        });
         searchTool = new DynamicTool({
           name: "google_custom_search",
           description: googleCustomSearchTool.description,
