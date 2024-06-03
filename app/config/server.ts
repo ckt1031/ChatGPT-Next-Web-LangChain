@@ -123,6 +123,8 @@ export const getServerSideConfig = () => {
     code: process.env.CODE,
     codes: ACCESS_CODES,
 
+    enableSSO: !!process.env.ENABLE_SSO,
+
     proxyUrl: process.env.PROXY_URL,
     isVercel: !!process.env.VERCEL,
 

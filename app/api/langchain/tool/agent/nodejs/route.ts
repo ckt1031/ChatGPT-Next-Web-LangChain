@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
-import { auth } from "@/app/api/auth";
+import { apiAuth } from "@/app/api/auth";
 import { NodeJSTool } from "@/app/api/langchain-tools/nodejs_tools";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { NextAuthRequest } from "next-auth/lib";
+import { auth } from "@/app/lib/auth";
 
-async function handle(req: NextRequest) {
+async function handle(req: NextAuthRequest) {
   if (req.method === "OPTIONS") {
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
   try {
-    const authResult = auth(req, ModelProvider.GPT);
+    const authResult = await apiAuth(req, ModelProvider.GPT);
     if (authResult.error) {
       return NextResponse.json(authResult, {
         status: 401,
@@ -84,7 +86,7 @@ async function handle(req: NextRequest) {
   }
 }
 
-export const GET = handle;
-export const POST = handle;
+export const GET = auth(handle);
+export const POST = auth(handle);
 
 export const runtime = "nodejs";

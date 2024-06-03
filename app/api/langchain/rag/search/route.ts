@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/app/api/auth";
+import { apiAuth } from "@/app/api/auth";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "@/app/constant";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
 import { getServerSideConfig } from "@/app/config/server";
+import { NextAuthRequest } from "next-auth/lib";
+import { auth } from "@/app/lib/auth";
 
 interface RequestBody {
   sessionId: string;
@@ -13,12 +15,12 @@ interface RequestBody {
   baseUrl?: string;
 }
 
-async function handle(req: NextRequest) {
+async function handle(req: NextAuthRequest) {
   if (req.method === "OPTIONS") {
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
   try {
-    const authResult = auth(req, ModelProvider.GPT);
+    const authResult = await apiAuth(req, ModelProvider.GPT);
     if (authResult.error) {
       return NextResponse.json(authResult, {
         status: 401,
@@ -96,7 +98,7 @@ function getOpenAIBaseUrl(reqBaseUrl: string | undefined) {
   return baseUrl;
 }
 
-export const POST = handle;
+export const POST = auth(handle);
 
 export const runtime = "nodejs";
 export const preferredRegion = [

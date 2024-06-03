@@ -194,7 +194,6 @@ export function useLoadData() {
     (async () => {
       const models = await api.llm.models();
       config.mergeModels(models);
-      console.log("[Model] got models from server", models);
     })();
 
     (async () => {

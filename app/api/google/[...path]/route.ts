@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../../auth";
+import { apiAuth } from "../../auth";
 import { getServerSideConfig } from "@/app/config/server";
 import { GEMINI_BASE_URL, ModelProvider } from "@/app/constant";
+import { auth } from "@/app/lib/auth";
+import { AppRouteHandlerFnContext } from "next-auth/lib/types";
+import { NextAuthRequest } from "next-auth/lib";
 
 async function handle(
-  req: NextRequest,
-  { params }: { params: { path: string[] } },
+  req: NextAuthRequest,
+  { params }: AppRouteHandlerFnContext,
 ) {
   console.log("[Google Route] params ", params);
 
@@ -39,7 +42,7 @@ async function handle(
     10 * 60 * 1000,
   );
 
-  const authResult = auth(req, ModelProvider.GeminiPro);
+  const authResult = await apiAuth(req, ModelProvider.GeminiPro);
   if (authResult.error) {
     return NextResponse.json(authResult, {
       status: 401,
@@ -96,8 +99,8 @@ async function handle(
   }
 }
 
-export const GET = handle;
-export const POST = handle;
+export const GET = auth(handle);
+export const POST = auth(handle);
 
 export const runtime = "edge";
 export const preferredRegion = [

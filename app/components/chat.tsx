@@ -122,6 +122,7 @@ import {
 import { FileInfo } from "../client/platforms/utils";
 import { globalSync } from "../store/sync";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "../utils/ms_edge_tts";
+import { useSession } from "next-auth/react";
 
 const ttsPlayer = createTTSPlayer();
 
@@ -1090,6 +1091,8 @@ function _Chat() {
     });
   };
 
+  const authSession = useSession();
+
   const [speechStatus, setSpeechStatus] = useState(false);
   const [speechLoading, setSpeechLoading] = useState(false);
   async function openaiSpeech(text: string) {
@@ -1145,7 +1148,12 @@ function _Chat() {
     session.messages.at(0)?.content !== BOT_HELLO.content
   ) {
     const copiedHello = Object.assign({}, BOT_HELLO);
-    if (!accessStore.isAuthorized()) {
+    if (
+      !accessStore.isAuthorized() &&
+      !accessStore.needCode &&
+      accessStore.enableSSO &&
+      !authSession.data?.user
+    ) {
       copiedHello.content = Locale.Error.Unauthorized;
     }
     context.push(copiedHello);

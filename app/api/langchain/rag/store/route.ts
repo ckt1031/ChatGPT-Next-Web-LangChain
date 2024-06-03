@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/app/api/auth";
+import { apiAuth } from "@/app/api/auth";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
@@ -21,6 +21,8 @@ import mime from "mime";
 import LocalFileStorage from "@/app/utils/local_file_storage";
 import S3FileStorage from "@/app/utils/s3_file_storage";
 import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
+import { NextAuthRequest } from "next-auth/lib";
+import { auth } from "@/app/lib/auth";
 
 interface RequestBody {
   sessionId: string;
@@ -63,12 +65,12 @@ function getLoader(
   }
 }
 
-async function handle(req: NextRequest) {
+async function handle(req: NextAuthRequest) {
   if (req.method === "OPTIONS") {
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
   try {
-    const authResult = auth(req, ModelProvider.GPT);
+    const authResult = await apiAuth(req, ModelProvider.GPT);
     if (authResult.error) {
       return NextResponse.json(authResult, {
         status: 401,
@@ -197,7 +199,7 @@ function getOpenAIBaseUrl(reqBaseUrl: string | undefined) {
   return baseUrl;
 }
 
-export const POST = handle;
+export const POST = auth(handle);
 
 export const runtime = "nodejs";
 export const preferredRegion = [

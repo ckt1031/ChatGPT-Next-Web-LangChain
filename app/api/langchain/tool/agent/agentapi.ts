@@ -10,10 +10,7 @@ import { ACCESS_CODE_PREFIX } from "@/app/constant";
 // import * as langchainTools from "langchain/tools";
 import * as langchainTools from "@/app/api/langchain-tools/langchian-tool-index";
 import { DuckDuckGo } from "@/app/api/langchain-tools/duckduckgo_search";
-import {
-  DynamicTool,
-  Tool
-} from "@langchain/core/tools";
+import { DynamicTool, Tool } from "@langchain/core/tools";
 import { convertToOpenAITool } from "@langchain/core/utils/function_calling";
 import { BaiduSearch } from "@/app/api/langchain-tools/baidu_search";
 import { GoogleSearch } from "@/app/api/langchain-tools/google_search";
