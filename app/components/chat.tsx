@@ -1108,22 +1108,22 @@ function _Chat() {
       let audioBuffer: ArrayBuffer;
       const { markdownToTxt } = require("markdown-to-txt");
       const textContent = markdownToTxt(text);
-      if (config.ttsConfig.engine !== DEFAULT_TTS_ENGINE) {
-        const edgeVoiceName = accessStore.edgeVoiceName();
-        const tts = new MsEdgeTTS();
-        await tts.setMetadata(
-          edgeVoiceName,
-          OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3,
-        );
-        audioBuffer = await tts.toArrayBuffer(textContent);
-      } else {
+      // if (config.ttsConfig.engine !== DEFAULT_TTS_ENGINE) {
+      //   const edgeVoiceName = accessStore.edgeVoiceName();
+      //   const tts = new MsEdgeTTS();
+      //   await tts.setMetadata(
+      //     edgeVoiceName,
+      //     OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3,
+      //   );
+      //   audioBuffer = await tts.toArrayBuffer(textContent);
+      // } else {
         audioBuffer = await api.llm.speech({
           model: config.ttsConfig.model,
           input: textContent,
           voice: config.ttsConfig.voice,
           speed: config.ttsConfig.speed,
         });
-      }
+      // }
       setSpeechStatus(true);
       ttsPlayer
         .play(audioBuffer, () => {
