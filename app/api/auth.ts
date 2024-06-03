@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getServerSideConfig } from "../config/server";
 import md5 from "spark-md5";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "../constant";
+import { NextAuthRequest } from "next-auth/lib";
 
 // function getIP(req: NextRequest) {
 //   let ip = req.ip ?? req.headers.get("x-real-ip");
@@ -24,7 +25,7 @@ function parseApiKey(bearToken: string) {
   };
 }
 
-export function auth(req: NextRequest, modelProvider: ModelProvider) {
+export async function apiAuth(req: NextAuthRequest, modelProvider: ModelProvider) {
   const authToken = req.headers.get("Authorization") ?? "";
 
   // check if it is openai api key or user token
@@ -50,6 +51,16 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
       error: true,
       msg: !accessCode ? "empty access code" : "wrong access code",
     };
+  }
+
+  // Next Auth
+  if (serverConfig.enableSSO) {    
+    if (!req.auth) {
+      return {
+        error: true,
+        msg: "Please login to SSO first",
+      };
+    }
   }
 
   if (serverConfig.hideUserApiKey && !!apiKey) {
@@ -91,57 +102,6 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
     if (systemApiKey) {
       // console.log("[Auth] use system api key");
       req.headers.set("Authorization", `Bearer ${systemApiKey}`);
-    } else {
-      // console.log("[Auth] admin did not provide an api key");
-    }
-  } else {
-    // console.log("[Auth] use user api key");
-  }
-
-  return {
-    error: false,
-  };
-}
-
-export function googleAuth(req: NextRequest) {
-  const authToken = req.headers.get("Authorization") ?? "";
-
-  // check if it is openai api key or user token
-  const { accessCode, apiKey } = parseApiKey(authToken);
-
-  const hashedCode = md5.hash(accessCode ?? "").trim();
-
-  const serverConfig = getServerSideConfig();
-  // console.log("[Auth] allowed hashed codes: ", [...serverConfig.codes]);
-  // console.log("[Auth] got access code:", accessCode);
-  // console.log("[Auth] hashed access code:", hashedCode);
-  // console.log("[User IP] ", getIP(req));
-  // console.log("[Time] ", new Date().toLocaleString());
-
-  if (serverConfig.needCode && !serverConfig.codes.has(hashedCode) && !apiKey) {
-    return {
-      error: true,
-      msg: !accessCode ? "empty access code" : "wrong access code",
-    };
-  }
-
-  if (serverConfig.hideUserApiKey && !!apiKey) {
-    return {
-      error: true,
-      msg: "you are not allowed to access openai with your own api key",
-    };
-  }
-
-  // if user does not provide an api key, inject system api key
-  if (!apiKey) {
-    const serverApiKey = serverConfig.googleApiKey;
-
-    if (serverApiKey) {
-      // console.log("[Auth] use system api key");
-      req.headers.set(
-        "Authorization",
-        `${serverConfig.isAzure ? "" : "Bearer "}${serverApiKey}`,
-      );
     } else {
       // console.log("[Auth] admin did not provide an api key");
     }

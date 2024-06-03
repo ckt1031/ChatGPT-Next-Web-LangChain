@@ -8,14 +8,17 @@ import {
 } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../../auth";
+import { apiAuth } from "../../auth";
 import { collectModelTable } from "@/app/utils/model";
+import { auth } from "@/app/lib/auth";
+import { AppRouteHandlerFnContext } from "next-auth/lib/types";
+import { NextAuthRequest } from "next-auth/lib";
 
 const ALLOWD_PATH = new Set([Anthropic.ChatPath, Anthropic.ChatPath1]);
 
 async function handle(
-  req: NextRequest,
-  { params }: { params: { path: string[] } },
+  req: NextAuthRequest,
+  { params }: AppRouteHandlerFnContext,
 ) {
   console.log("[Anthropic Route] params ", params);
 
@@ -23,7 +26,7 @@ async function handle(
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
-  const subpath = params.path.join("/");
+  const subpath = (params?.path as string[]).join("/");
 
   if (!ALLOWD_PATH.has(subpath)) {
     console.log("[Anthropic Route] forbidden path ", subpath);
@@ -38,7 +41,7 @@ async function handle(
     );
   }
 
-  const authResult = auth(req, ModelProvider.Claude);
+  const authResult = await apiAuth(req, ModelProvider.Claude);
   if (authResult.error) {
     return NextResponse.json(authResult, {
       status: 401,
@@ -54,8 +57,8 @@ async function handle(
   }
 }
 
-export const GET = handle;
-export const POST = handle;
+export const GET = auth(handle);
+export const POST = auth(handle);
 
 export const runtime = "edge";
 export const preferredRegion = [

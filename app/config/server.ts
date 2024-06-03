@@ -110,7 +110,7 @@ export const getServerSideConfig = () => {
 
     isGoogle,
     googleApiKey: getApiKey(process.env.GOOGLE_API_KEY),
-    googleUrl: process.env.GEMINI_BASE_URL ?? process.env.GOOGLE_URL,
+    googleUrl: process.env.GOOGLE_URL,
 
     isAnthropic,
     anthropicApiKey: getApiKey(process.env.ANTHROPIC_API_KEY),
@@ -122,6 +122,8 @@ export const getServerSideConfig = () => {
     needCode: ACCESS_CODES.size > 0,
     code: process.env.CODE,
     codes: ACCESS_CODES,
+
+    enableSSO: !!process.env.ENABLE_SSO,
 
     proxyUrl: process.env.PROXY_URL,
     isVercel: !!process.env.VERCEL,

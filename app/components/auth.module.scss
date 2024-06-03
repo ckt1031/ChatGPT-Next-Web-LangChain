@@ -27,10 +27,12 @@
   .auth-actions {
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 10px;
+  }
 
-    button:not(:last-child) {
-      margin-bottom: 10px;
-    }
+  .login-box {
+    // mt-4
+    margin-top: 2vh;
   }
 }

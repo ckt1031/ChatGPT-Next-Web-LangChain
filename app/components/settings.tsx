@@ -75,6 +75,7 @@ import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
 import { TTSConfigList } from "./tts-config";
 import { STTConfigList } from "./stt-config";
+import { useSession } from "next-auth/react";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -635,7 +636,11 @@ export function Settings() {
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
-  const showUsage = accessStore.isAuthorized();
+  const session = useSession();
+
+  const showUsage =
+    !!(accessStore.enableSSO && session.data?.user) ||
+    accessStore.isAuthorized();
   useEffect(() => {
     showUsage && checkUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps

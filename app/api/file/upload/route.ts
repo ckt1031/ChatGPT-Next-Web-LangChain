@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ModelProvider } from "@/app/constant";
-import { auth } from "@/app/api/auth";
-// import LocalFileStorage from "@/app/utils/local_file_storage";
+import { apiAuth } from "@/app/api/auth";
 import { getServerSideConfig } from "@/app/config/server";
 import S3FileStorage from "@/app/utils/s3_file_storage";
+import { NextAuthRequest } from "next-auth/lib";
+import { auth } from "@/app/lib/auth";
 
 function extname(filePath: string) {
   const baseName = filePath.split("/").pop(); // Get the base name of the file
@@ -21,12 +22,12 @@ function extname(filePath: string) {
   return baseName.slice(dotIndex);
 }
 
-async function handle(req: NextRequest) {
+async function handle(req: NextAuthRequest) {
   if (req.method === "OPTIONS") {
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
-  const authResult = auth(req, ModelProvider.GPT);
+  const authResult = await apiAuth(req, ModelProvider.GPT);
   if (authResult.error) {
     return NextResponse.json(authResult, {
       status: 401,
@@ -72,6 +73,6 @@ async function handle(req: NextRequest) {
   }
 }
 
-export const POST = handle;
+export const POST = auth(handle);
 
 export const runtime = "edge";

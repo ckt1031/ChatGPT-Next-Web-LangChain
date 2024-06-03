@@ -44,6 +44,7 @@ const DEFAULT_ACCESS_STATE = {
 
   // server config
   needCode: true,
+  enableSSO: false,
   hideUserApiKey: false,
   hideBalanceQuery: false,
   disableGPT4: false,
@@ -63,7 +64,7 @@ export const useAccessStore = createPersistStore(
     enabledAccessControl() {
       this.fetch();
 
-      return get().needCode;
+      return get().needCode || get().enableSSO;
     },
 
     edgeVoiceName() {
@@ -104,7 +105,9 @@ export const useAccessStore = createPersistStore(
         this.isValidGoogle() ||
         this.isValidAnthropic() ||
         !this.enabledAccessControl() ||
-        (this.enabledAccessControl() && ensure(get(), ["accessCode"]))
+        (this.enabledAccessControl() &&
+          ensure(get(), ["accessCode"]) &&
+          get().needCode)
       );
     },
     fetch() {
