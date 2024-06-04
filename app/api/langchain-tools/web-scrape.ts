@@ -15,7 +15,7 @@ export class ServerlessWebScraping extends Tool {
       result = await response.text();
     } else {
       const response = await fetch(
-        `https://tool-api.ckt1031.xyz/v1/web/extract/markdown?url=${encodeURIComponent(input)}`,
+        `https://tool-api.tsun1031.xyz/v1/web/extract/markdown?url=${encodeURIComponent(input)}`,
         {
           headers: {
             accept: "application/json",
