@@ -33,6 +33,7 @@ import {
 import { MultimodalContent } from "@/app/client/api";
 import { getLangFuse } from "./langfuse";
 import { GoogleCustomSearch } from "@/app/api/langchain-tools/langchian-tool-index";
+import { CKTSearch } from "@/app/api/langchain-tools/search";
 
 export interface RequestMessage {
   role: string;
@@ -249,6 +250,9 @@ export class AgentApi {
       var handler = await this.getHandler(reqBody);
 
       let searchTool: Tool = new DuckDuckGo();
+      if (process.env.CKT_TOKEN) {
+        searchTool = new CKTSearch();
+      }
       if (process.env.CHOOSE_SEARCH_ENGINE) {
         switch (process.env.CHOOSE_SEARCH_ENGINE) {
           case "google":
