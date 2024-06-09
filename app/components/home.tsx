@@ -9,7 +9,7 @@ import styles from "./home.module.scss";
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 
-import { useMobileScreen } from "../utils";
+import { getClientApi, useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
 import { ModelProvider, Path, SlotID } from "../constant";
@@ -182,14 +182,8 @@ export function useLoadData() {
     return syncStore.cloudSync();
   }, [syncStore]);
 
-  var api: ClientApi;
-  if (config.modelConfig.model.startsWith("gemini")) {
-    api = new ClientApi(ModelProvider.GeminiPro);
-  } else if (identifyDefaultClaudeModel(config.modelConfig.model)) {
-    api = new ClientApi(ModelProvider.Claude);
-  } else {
-    api = new ClientApi(ModelProvider.GPT);
-  }
+  var api: ClientApi = getClientApi(config.modelConfig.model);
+
   useEffect(() => {
     (async () => {
       const models = await api.llm.models();
