@@ -21,7 +21,6 @@ import { IconButton } from "./button";
 import {
   copyToClipboard,
   downloadAs,
-  getClientApi,
   getMessageImages,
   useMobileScreen,
 } from "../utils";
@@ -48,6 +47,7 @@ import { getClientConfig } from "../config/client";
 import { ClientApi } from "../client/api";
 import { getMessageTextContent } from "../utils";
 import { identifyDefaultClaudeModel } from "../utils/checkers";
+import { getClientApi } from "./home";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,

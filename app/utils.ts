@@ -282,18 +282,3 @@ export function isSupportRAGModel(modelName: string) {
   );
 }
 
-export function getClientApi(modelName: string): ClientApi {
-  const accessStore = useAccessStore.getState();
-  if (accessStore.isUseOpenAIEndpointForAllModels) {
-    return new ClientApi(ModelProvider.GPT);
-  }
-  var api: ClientApi;
-  if (modelName.startsWith("gemini")) {
-    api = new ClientApi(ModelProvider.GeminiPro);
-  } else if (identifyDefaultClaudeModel(modelName)) {
-    api = new ClientApi(ModelProvider.Claude);
-  } else {
-    api = new ClientApi(ModelProvider.GPT);
-  }
-  return api;
-}

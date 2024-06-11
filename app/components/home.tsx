@@ -9,7 +9,7 @@ import styles from "./home.module.scss";
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 
-import { getClientApi, useMobileScreen } from "../utils";
+import { useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
 import { ModelProvider, Path, SlotID } from "../constant";
@@ -173,6 +173,22 @@ function Screen() {
       )}
     </div>
   );
+}
+
+export function getClientApi(modelName: string): ClientApi {
+  const accessStore = useAccessStore.getState();
+  if (accessStore.isUseOpenAIEndpointForAllModels) {
+    return new ClientApi(ModelProvider.GPT);
+  }
+  var api: ClientApi;
+  if (modelName.startsWith("gemini")) {
+    api = new ClientApi(ModelProvider.GeminiPro);
+  } else if (identifyDefaultClaudeModel(modelName)) {
+    api = new ClientApi(ModelProvider.Claude);
+  } else {
+    api = new ClientApi(ModelProvider.GPT);
+  }
+  return api;
 }
 
 export function useLoadData() {

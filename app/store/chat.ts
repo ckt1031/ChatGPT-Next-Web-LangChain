@@ -1,4 +1,4 @@
-import { trimTopic, getMessageTextContent, getClientApi } from "../utils";
+import { trimTopic, getMessageTextContent } from "../utils";
 
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
@@ -31,6 +31,7 @@ import { identifyDefaultClaudeModel } from "../utils/checkers";
 import { collectModelsWithDefaultModel } from "../utils/model";
 import { useAccessStore } from "./access";
 import { globalSync } from "./sync";
+import { getClientApi } from "../components/home";
 
 export type ChatMessage = RequestMessage & {
   date: string;
