@@ -198,9 +198,11 @@ export function useLoadData() {
     return syncStore.cloudSync();
   }, [syncStore]);
 
+  var api: ClientApi = getClientApi(config.modelConfig.model);
+
   useEffect(() => {
     (async () => {
-      const models = await new ClientApi(ModelProvider.GPT).llm.models();
+      const models = await api.llm.models();
       config.mergeModels(models);
     })();
 
