@@ -2,7 +2,7 @@ import { LLMModel } from "../client/api";
 
 const customProvider = (modelName: string) => ({
   id: modelName,
-  providerName: "",
+  providerName: "Custom",
   providerType: "custom",
 });
 
@@ -49,7 +49,7 @@ export function collectModelTable(
         // 1. find model by name(), and set available value
         let count = 0;
         for (const fullName in modelTable) {
-          if (fullName.includes(name)) {
+          if (fullName.split("@").shift() == name) {
             count += 1;
             modelTable[fullName]["available"] = available;
             if (displayName) {
