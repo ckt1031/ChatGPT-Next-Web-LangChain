@@ -9,7 +9,7 @@ export class CKTSearch extends Tool {
     const CKT_TOKEN = process.env.CKT_TOKEN;
 
     const response = await fetch(
-      `https://tool-api.tsun1031.xyz/v1/web/search?query=${encodeURIComponent(input)}`,
+      `https://api.tsun1031.xyz/v1/web/search?query=${encodeURIComponent(input)}`,
       {
         headers: {
           accept: "application/json",
@@ -18,13 +18,13 @@ export class CKTSearch extends Tool {
       },
     );
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       data: {
-        title: string
-        link: string
-        snippet: string
-      }[]
-    }
+        title: string;
+        link: string;
+        snippet: string;
+      }[];
+    };
 
     if (!data.data || !response.ok) {
       throw new Error("Failed to fetch ckt search data");
