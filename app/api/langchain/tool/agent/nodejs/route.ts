@@ -4,6 +4,8 @@ import { apiAuth } from "@/app/api/auth";
 import { NodeJSTool } from "@/app/api/langchain-tools/nodejs_tools";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import type { EmbeddingsInterface } from "@langchain/core/embeddings";
+import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama";
 import { NextAuthRequest } from "next-auth/lib";
 import { auth } from "@/app/lib/auth";
 
@@ -46,13 +48,22 @@ async function handle(req: NextAuthRequest) {
       },
       { basePath: baseUrl },
     );
-    const ragEmbeddings = new OpenAIEmbeddings(
-      {
-        modelName: process.env.RAG_EMBEDDING_MODEL ?? "text-embedding-3-large",
-        openAIApiKey: apiKey,
-      },
-      { basePath: baseUrl },
-    );
+    let ragEmbeddings: EmbeddingsInterface;
+    if (process.env.OLLAMA_BASE_URL) {
+      ragEmbeddings = new OllamaEmbeddings({
+        model: process.env.RAG_EMBEDDING_MODEL,
+        baseUrl: process.env.OLLAMA_BASE_URL,
+      });
+    } else {
+      ragEmbeddings = new OpenAIEmbeddings(
+        {
+          modelName:
+            process.env.RAG_EMBEDDING_MODEL ?? "text-embedding-3-large",
+          openAIApiKey: apiKey,
+        },
+        { basePath: baseUrl },
+      );
+    }
 
     var dalleCallback = async (data: string) => {
       var response = new ResponseBody();
