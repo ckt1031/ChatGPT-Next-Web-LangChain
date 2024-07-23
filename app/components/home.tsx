@@ -12,7 +12,7 @@ import LoadingIcon from "../icons/three-dots.svg";
 import { useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
-import { ModelProvider, Path, SlotID } from "../constant";
+import { Path, SlotID } from "../constant";
 import { ErrorBoundary } from "./error";
 
 import { getISOLang, getLang } from "../locales";
@@ -27,9 +27,8 @@ import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
-import { ClientApi } from "../client/api";
+import { type ClientApi, getClientApi } from "../client/api";
 import { useAccessStore } from "../store";
-import { identifyDefaultClaudeModel } from "../utils/checkers";
 import { useSyncStore } from "../store/sync";
 
 export function Loading(props: { noLogo?: boolean }) {
@@ -175,21 +174,21 @@ function Screen() {
   );
 }
 
-export function getClientApi(modelName: string): ClientApi {
-  const accessStore = useAccessStore.getState();
-  if (accessStore.isUseOpenAIEndpointForAllModels) {
-    return new ClientApi(ModelProvider.GPT);
-  }
-  var api: ClientApi;
-  if (modelName.startsWith("gemini")) {
-    api = new ClientApi(ModelProvider.GeminiPro);
-  } else if (identifyDefaultClaudeModel(modelName)) {
-    api = new ClientApi(ModelProvider.Claude);
-  } else {
-    api = new ClientApi(ModelProvider.GPT);
-  }
-  return api;
-}
+// export function getClientApi(modelName: string): ClientApi {
+//   const accessStore = useAccessStore.getState();
+//   if (accessStore.isUseOpenAIEndpointForAllModels) {
+//     return new ClientApi(ModelProvider.GPT);
+//   }
+//   var api: ClientApi;
+//   if (modelName.startsWith("gemini")) {
+//     api = new ClientApi(ModelProvider.GeminiPro);
+//   } else if (identifyDefaultClaudeModel(modelName)) {
+//     api = new ClientApi(ModelProvider.Claude);
+//   } else {
+//     api = new ClientApi(ModelProvider.GPT);
+//   }
+//   return api;
+// }
 
 export function useLoadData() {
   const config = useAppConfig();
@@ -198,7 +197,7 @@ export function useLoadData() {
     return syncStore.cloudSync();
   }, [syncStore]);
 
-  var api: ClientApi = getClientApi(config.modelConfig.model);
+  const api: ClientApi = getClientApi(config.modelConfig.providerName);
 
   useEffect(() => {
     (async () => {

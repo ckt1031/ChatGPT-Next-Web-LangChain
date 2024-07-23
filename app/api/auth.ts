@@ -90,9 +90,18 @@ export async function apiAuth(req: NextAuthRequest, modelProvider: ModelProvider
       case ModelProvider.Claude:
         systemApiKey = serverConfig.anthropicApiKey;
         break;
+      case ModelProvider.Doubao:
+        systemApiKey = serverConfig.bytedanceApiKey;
+        break;
+      case ModelProvider.Ernie:
+        systemApiKey = serverConfig.baiduApiKey;
+        break;
+      case ModelProvider.Qwen:
+        systemApiKey = serverConfig.alibabaApiKey;
+        break;
       case ModelProvider.GPT:
       default:
-        if (serverConfig.isAzure) {
+        if (req.nextUrl.pathname.includes("azure/deployments")) {
           systemApiKey = serverConfig.azureApiKey;
         } else {
           systemApiKey = serverConfig.apiKey;

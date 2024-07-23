@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiAuth } from "../../auth";
 import { getServerSideConfig } from "@/app/config/server";
-import { GEMINI_BASE_URL, ModelProvider } from "@/app/constant";
-import { auth } from "@/app/lib/auth";
+import {
+  ApiPath,
+  GEMINI_BASE_URL,
+  Google,
+  ModelProvider,
+} from "@/app/constant";
+import { prettyObject } from "@/app/utils/format";
 import { AppRouteHandlerFnContext } from "next-auth/lib/types";
 import { NextAuthRequest } from "next-auth/lib";
+import { auth } from "@/app/lib/auth";
+
+const serverConfig = getServerSideConfig();
 
 async function handle(
   req: NextAuthRequest,
@@ -16,32 +24,6 @@ async function handle(
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
-  const controller = new AbortController();
-
-  const serverConfig = getServerSideConfig();
-
-  let baseUrl = serverConfig.googleUrl || GEMINI_BASE_URL;
-
-  if (!baseUrl.startsWith("http")) {
-    baseUrl = `https://${baseUrl}`;
-  }
-
-  if (baseUrl.endsWith("/")) {
-    baseUrl = baseUrl.slice(0, -1);
-  }
-
-  let path = `${req.nextUrl.pathname}`.replaceAll("/api/google/", "");
-
-  // console.log("[Proxy] ", path);
-  // console.log("[Base Url]", baseUrl);
-
-  const timeoutId = setTimeout(
-    () => {
-      controller.abort();
-    },
-    10 * 60 * 1000,
-  );
-
   const authResult = await apiAuth(req, ModelProvider.GeminiPro);
   if (authResult.error) {
     return NextResponse.json(authResult, {
@@ -52,9 +34,9 @@ async function handle(
   const bearToken = req.headers.get("x-goog-api-key") ?? "";
   const token = bearToken.trim().replaceAll("Bearer ", "").trim();
 
-  const key = token ? token : serverConfig.googleApiKey;
+  const apiKey = token ? token : serverConfig.googleApiKey;
 
-  if (!key) {
+  if (!apiKey) {
     return NextResponse.json(
       {
         error: true,
@@ -65,8 +47,44 @@ async function handle(
       },
     );
   }
+  try {
+    const response = await request(req, apiKey);
+    return response;
+  } catch (e) {
+    console.error("[Google] ", e);
+    return NextResponse.json(prettyObject(e));
+  }
+}
 
-  const fetchUrl = `${baseUrl}/${path}?key=${key}`;
+async function request(req: NextRequest, apiKey: string) {
+  const controller = new AbortController();
+
+  let baseUrl = serverConfig.googleUrl || GEMINI_BASE_URL;
+
+  let path = `${req.nextUrl.pathname}`.replaceAll(ApiPath.Google, "");
+
+  if (!baseUrl.startsWith("http")) {
+    baseUrl = `https://${baseUrl}`;
+  }
+
+  if (baseUrl.endsWith("/")) {
+    baseUrl = baseUrl.slice(0, -1);
+  }
+
+  console.log("[Proxy] ", path);
+  console.log("[Base Url]", baseUrl);
+
+  const timeoutId = setTimeout(
+    () => {
+      controller.abort();
+    },
+    10 * 60 * 1000,
+  );
+  const fetchUrl = `${baseUrl}${path}?key=${apiKey}${
+    req?.nextUrl?.searchParams?.get("alt") === "sse" ? "&alt=sse" : ""
+  }`;
+
+  console.log("[Fetch Url] ", fetchUrl);
   const fetchOptions: RequestInit = {
     headers: {
       "Content-Type": "application/json",

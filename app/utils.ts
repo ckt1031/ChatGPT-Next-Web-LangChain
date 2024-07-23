@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
-import { ClientApi, RequestMessage } from "./client/api";
-import { DEFAULT_MODELS, ModelProvider } from "./constant";
-import { identifyDefaultClaudeModel } from "./utils/checkers";
-import { useAccessStore } from "./store";
+import { RequestMessage } from "./client/api";
+import { DEFAULT_MODELS } from "./constant";
 
 export function trimTopic(topic: string) {
   // Fix an issue where double quotes still show in the Indonesian language
@@ -275,6 +273,8 @@ export function isSupportRAGModel(modelName: string) {
     "gpt-4-turbo-2024-04-09",
     "gpt-4o",
     "gpt-4o-2024-05-13",
+    "gpt-4o-mini",
+    "gpt-4o-mini-2024-07-18",
   ];
   if (specialModels.some((keyword) => modelName === keyword)) return true;
   if (isVisionModel(modelName)) return false;
@@ -282,4 +282,3 @@ export function isSupportRAGModel(modelName: string) {
     (model) => model.name === modelName,
   );
 }
-
