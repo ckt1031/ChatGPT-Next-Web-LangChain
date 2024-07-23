@@ -2,6 +2,8 @@
 
 > [!WARNING]
 > 新版本将向量库从 qdrant  变更为 supabase，请注意相关参数变更！
+> 
+> vercel 部署需要配置环境变量 NEXT_PUBLIC_ENABLE_NODEJS_PLUGIN=1 来强制开启 node 运行时，不过免费版本的 vercel 对 node 运行时限制较多，不建议在 vercel 下使用。
 
 ## 效果图
 
@@ -36,7 +38,7 @@
 1. 登录 https://supabase.com 并创建一个账户
 2. 在控制面板中创建一个项目
 3. 在 `Project Settings` `API Settings` 中获取 `URL` 和 `service_role secret`
-4. 在 `SQL Editor` 中执行下面脚本创建表和函数
+4. 在 `SQL Editor` 中执行下面脚本创建表和函数(需根据[模型维度参考]修改vector(1536)中的维度数据)
 
 ```sql
 -- Enable the pgvector extension to work with embedding vectors
@@ -127,3 +129,14 @@ supabase 项目 service_role secret。
 配置后请修改参数 `RAG_EMBEDDING_MODEL` 为 ollama 的 embedding 模型名。
 
 上面的数据库初始化语句中的 `vector(1536)` 也要修改为你的向量模型所使用的维度。
+
+## 模型维度参考
+
+| 嵌入模型名             | 维度 | 提供者 |
+| ---------------------- | ---- | ------ |
+| text-embedding-3-small | 1536 | openai |
+| text-embedding-3-large | 3072 | openai |
+| text-embedding-ada-002 | 1536 | openai |
+| snowflake-arctic-embed | 1024 | ollama |
+| mxbai-embed-large      | 1024 | ollama |
+| nomic-embed-text       | 768  | ollama |

@@ -1,4 +1,5 @@
 <div align="center">
+
 <img src="./docs/images/head-cover.png" alt="icon"/>
 
 <h1 align="center">ChatGPT Next Web LangChain</h1>
@@ -9,8 +10,10 @@
 
 [网页版](https://n3xt.chat) / [反馈](https://github.com/Hk-Gosuto/ChatGPT-Next-Web-LangChain/issues) / [Discord](https://discord.gg/QPrKZFwWn8) / QQ群: `763467624`
 
-[web-url]: https://n3xt.chat/
-[download-url]: https://github.com/Hk-Gosuto/ChatGPT-Next-Web-LangChain/releases
+[网页版](https://app.nextchat.dev/) / [客户端](https://github.com/Yidadaa/ChatGPT-Next-Web/releases) / [反馈](https://github.com/Yidadaa/ChatGPT-Next-Web/issues)
+
+[web-url]: https://app.nextchat.dev/
+[download-url]: https://github.com/Yidadaa/ChatGPT-Next-Web/releases
 [Web-image]: https://img.shields.io/badge/Web-PWA-orange?logo=microsoftedge
 [Windows-image]: https://img.shields.io/badge/-Windows-blue?logo=windows
 [MacOS-image]: https://img.shields.io/badge/-MacOS-black?logo=apple
@@ -238,7 +241,7 @@ OpenAI 接口代理 URL，如果你手动配置了 openai 接口代理，请填�
 
 Google Gemini Pro Api Key.
 
-### ~~ `GOOGLE_BASE_URL` （可选）~~  `GEMINI_BASE_URL` （可选）
+### `GEMINI_BASE_URL` （可选）
 
 Google Gemini Pro Api Url.
 
@@ -283,6 +286,17 @@ anthropic claude Api Url.
 ### `DISABLE_FAST_LINK` （可选）
 
 如果你想禁用从链接解析预制设置，将此环境变量设置为 1 即可。
+
+For Azure: use `modelName@azure=deploymentName` to customize model name and deployment name.
+> Example: `+gpt-3.5-turbo@azure=gpt35` will show option `gpt35(Azure)` in model list.
+> If you only can use Azure model, `-all,+gpt-3.5-turbo@azure=gpt35` will `gpt35(Azure)` the only option in model list.
+
+For ByteDance: use `modelName@bytedance=deploymentName` to customize model name and deployment name.
+> Example: `+Doubao-lite-4k@bytedance=ep-xxxxx-xxx` will show option `Doubao-lite-4k(ByteDance)` in model list.
+
+### `DEFAULT_MODEL` （optional）
+
+Change default model
 
 ### `WHITE_WEBDEV_ENDPOINTS` (optional)
 

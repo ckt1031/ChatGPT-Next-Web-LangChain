@@ -3,24 +3,25 @@ import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
 import { getClientConfig } from "./config/client";
-import { type Metadata } from "next";
+import { Viewport, type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "NextChat",
   description: "Your personal ChatGPT Chat Bot.",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#e7f8ff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1b262a" },
-  ],
   appleWebApp: {
     title: "NextChat",
     statusBarStyle: "default",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#151515" },
+  ],
 };
 
 export default function RootLayout({

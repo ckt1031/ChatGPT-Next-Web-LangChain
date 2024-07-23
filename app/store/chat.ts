@@ -9,13 +9,17 @@ import {
   DEFAULT_MODELS,
   DEFAULT_SYSTEM_TEMPLATE,
   KnowledgeCutOffDate,
-  ModelProvider,
   StoreKey,
   SUMMARIZE_MODEL,
   GEMINI_SUMMARIZE_MODEL,
   MYFILES_BROWSER_TOOLS_SYSTEM_PROMPT,
 } from "../constant";
-import { ClientApi, RequestMessage, MultimodalContent } from "../client/api";
+import {
+  type ClientApi,
+  type RequestMessage,
+  type MultimodalContent,
+  getClientApi,
+} from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
@@ -28,11 +32,9 @@ export interface ChatToolMessage {
 }
 import { createPersistStore } from "../utils/store";
 import { FileInfo } from "../client/platforms/utils";
-import { identifyDefaultClaudeModel } from "../utils/checkers";
 import { collectModelsWithDefaultModel } from "../utils/model";
 import { useAccessStore } from "./access";
 import { globalSync } from "./sync";
-import { getClientApi } from "../components/home";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -103,13 +105,7 @@ function createEmptySession(): ChatSession {
 }
 
 function getSummarizeModel(currentModel: string) {
-  // if the current model does not exist in the default model
-  // example azure services cannot use SUMMARIZE_MODEL
-  const model = DEFAULT_MODELS.find((m) => m.name === currentModel);
-  console.log("model", model);
-  if (!model) return currentModel;
-  if (model.provider.providerType === "google") return GEMINI_SUMMARIZE_MODEL;
-  // if it is using gpt-* models, force to use 3.5 to summarize
+  // if it is using gpt-* models, force to use 4o-mini to summarize
   if (currentModel.startsWith("gpt")) {
     const configStore = useAppConfig.getState();
     const accessStore = useAccessStore.getState();
@@ -386,7 +382,7 @@ export const useChatStore = createPersistStore(
           model: modelConfig.model,
           toolMessages: [],
         });
-        var api: ClientApi = getClientApi(modelConfig.model);
+        const api: ClientApi = getClientApi(modelConfig.providerName);
         const isEnableRAG =
           session.attachFiles && session.attachFiles.length > 0;
         // get recent messages
@@ -689,7 +685,7 @@ ${file.partial}
         const session = get().currentSession();
         const modelConfig = session.mask.modelConfig;
 
-        var api: ClientApi = getClientApi(modelConfig.model);
+        const api: ClientApi = getClientApi(modelConfig.providerName);
 
         // remove error messages if any
         const messages = session.messages;
