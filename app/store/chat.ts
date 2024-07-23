@@ -14,11 +14,11 @@ import {
   GEMINI_SUMMARIZE_MODEL,
   MYFILES_BROWSER_TOOLS_SYSTEM_PROMPT,
 } from "../constant";
-import { getClientApi } from "../client/api";
-import type {
-  ClientApi,
-  RequestMessage,
-  MultimodalContent,
+import {
+  type ClientApi,
+  type RequestMessage,
+  type MultimodalContent,
+  getClientApi,
 } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
@@ -35,7 +35,6 @@ import { FileInfo } from "../client/platforms/utils";
 import { collectModelsWithDefaultModel } from "../utils/model";
 import { useAccessStore } from "./access";
 import { globalSync } from "./sync";
-import { getClientApi } from "../components/home";
 
 export type ChatMessage = RequestMessage & {
   date: string;

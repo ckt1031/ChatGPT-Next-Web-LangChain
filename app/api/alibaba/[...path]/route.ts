@@ -8,15 +8,17 @@ import {
 } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/app/api/auth";
 import { isModelAvailableInServer } from "@/app/utils/model";
-import type { RequestPayload } from "@/app/client/platforms/openai";
+import { AppRouteHandlerFnContext } from "next-auth/lib/types";
+import { NextAuthRequest } from "next-auth/lib";
+import { apiAuth } from "../../auth";
+import { auth } from "@/app/lib/auth";
 
 const serverConfig = getServerSideConfig();
 
 async function handle(
-  req: NextRequest,
-  { params }: { params: { path: string[] } },
+  req: NextAuthRequest,
+  { params }: AppRouteHandlerFnContext,
 ) {
   console.log("[Alibaba Route] params ", params);
 
@@ -24,7 +26,7 @@ async function handle(
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
-  const authResult = auth(req, ModelProvider.Qwen);
+  const authResult = await apiAuth(req, ModelProvider.Qwen);
   if (authResult.error) {
     return NextResponse.json(authResult, {
       status: 401,
@@ -40,8 +42,8 @@ async function handle(
   }
 }
 
-export const GET = handle;
-export const POST = handle;
+export const GET = auth(handle);
+export const POST = auth(handle);
 
 export const runtime = "edge";
 export const preferredRegion = [

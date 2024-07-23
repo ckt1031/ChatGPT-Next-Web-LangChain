@@ -2,12 +2,15 @@ import { getServerSideConfig } from "@/app/config/server";
 import { ModelProvider } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
+import { AppRouteHandlerFnContext } from "next-auth/lib/types";
+import { NextAuthRequest } from "next-auth/lib";
+import { apiAuth } from "../../auth";
+import { auth } from "@/app/lib/auth";
 
 async function handle(
-  req: NextRequest,
-  { params }: { params: { path: string[] } },
+  req: NextAuthRequest,
+  { params }: AppRouteHandlerFnContext,
 ) {
   console.log("[Azure Route] params ", params);
 
@@ -15,9 +18,7 @@ async function handle(
     return NextResponse.json({ body: "OK" }, { status: 200 });
   }
 
-  const subpath = params.path.join("/");
-
-  const authResult = auth(req, ModelProvider.GPT);
+  const authResult = await apiAuth(req, ModelProvider.GPT);
   if (authResult.error) {
     return NextResponse.json(authResult, {
       status: 401,
@@ -32,8 +33,8 @@ async function handle(
   }
 }
 
-export const GET = handle;
-export const POST = handle;
+export const GET = auth(handle);
+export const POST = auth(handle);
 
 export const runtime = "edge";
 export const preferredRegion = [
